@@ -1,0 +1,13 @@
+export default function Container({ 
+  children, 
+  className = '', 
+  maxWidth = 'max-w-7xl',
+  padding = 'px-4 sm:px-6 lg:px-8',
+  ...props 
+}) {
+  return (
+    <div className={`${maxWidth} mx-auto ${padding} ${className}`} {...props}>
+      {children}
+    </div>
+  );
+}

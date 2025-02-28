@@ -1,0 +1,241 @@
+'use client';
+
+import { useState } from 'react';
+import Button from './Button';
+
+export default function ContactForm({ className = '' }) {
+  const [formState, setFormState] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    company: '',
+    message: '',
+  });
+  
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormState(prev => ({ ...prev, [name]: value }));
+    
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+  
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formState.name.trim()) {
+      newErrors.name = 'Name is required';
+    }
+    
+    if (!formState.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formState.email)) {
+      newErrors.email = 'Email address is invalid';
+    }
+    
+    if (!formState.message.trim()) {
+      newErrors.message = 'Message is required';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) return;
+    
+    setIsSubmitting(true);
+    
+    try {
+      // This would be replaced with your actual API endpoint
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formState),
+      });
+      
+      if (response.ok) {
+        setFormSubmitted(true);
+        setFormState({
+          name: '',
+          email: '',
+          phone: '',
+          company: '',
+          message: '',
+        });
+      } else {
+        // Handle error
+        const data = await response.json();
+        setErrors({ submit: data.message || 'Something went wrong. Please try again.' });
+      }
+    } catch (error) {
+      setErrors({ submit: 'Network error. Please try again.' });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  
+  if (formSubmitted) {
+    return (
+      <div className={`bg-green-50 p-6 rounded-lg text-center ${className}`}>
+        <svg
+          className="mx-auto h-12 w-12 text-green-500"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M5 13l4 4L19 7"
+          />
+        </svg>
+        <h3 className="mt-3 text-lg font-medium text-green-800">Thank you for your message!</h3>
+        <p className="mt-2 text-sm text-green-700">
+          We've received your inquiry and will get back to you as soon as possible.
+        </p>
+        <div className="mt-6">
+          <Button
+            onClick={() => setFormSubmitted(false)}
+            variant="secondary"
+          >
+            Send Another Message
+          </Button>
+        </div>
+      </div>
+    );
+  }
+  
+  return (
+    <form onSubmit={handleSubmit} className={className}>
+      <div className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-8">
+        <div>
+          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+            Name *
+          </label>
+          <div className="mt-1">
+            <input
+              type="text"
+              name="name"
+              id="name"
+              value={formState.name}
+              onChange={handleChange}
+              className={`block w-full rounded-md shadow-sm py-3 px-4 focus:ring-blue-500 focus:border-blue-500 border ${
+                errors.name ? 'border-red-500' : 'border-gray-300'
+              }`}
+            />
+            {errors.name && (
+              <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+            )}
+          </div>
+        </div>
+        
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            Email *
+          </label>
+          <div className="mt-1">
+            <input
+              type="email"
+              name="email"
+              id="email"
+              value={formState.email}
+              onChange={handleChange}
+              className={`block w-full rounded-md shadow-sm py-3 px-4 focus:ring-blue-500 focus:border-blue-500 border ${
+                errors.email ? 'border-red-500' : 'border-gray-300'
+              }`}
+            />
+            {errors.email && (
+              <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+            )}
+          </div>
+        </div>
+        
+        <div>
+          <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+            Phone
+          </label>
+          <div className="mt-1">
+            <input
+              type="text"
+              name="phone"
+              id="phone"
+              value={formState.phone}
+              onChange={handleChange}
+              className="block w-full rounded-md border-gray-300 shadow-sm py-3 px-4 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+        </div>
+        
+        <div>
+          <label htmlFor="company" className="block text-sm font-medium text-gray-700">
+            Company
+          </label>
+          <div className="mt-1">
+            <input
+              type="text"
+              name="company"
+              id="company"
+              value={formState.company}
+              onChange={handleChange}
+              className="block w-full rounded-md border-gray-300 shadow-sm py-3 px-4 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+        </div>
+        
+        <div className="sm:col-span-2">
+          <label htmlFor="message" className="block text-sm font-medium text-gray-700">
+            Message *
+          </label>
+          <div className="mt-1">
+            <textarea
+              id="message"
+              name="message"
+              rows={5}
+              value={formState.message}
+              onChange={handleChange}
+              className={`block w-full rounded-md shadow-sm py-3 px-4 focus:ring-blue-500 focus:border-blue-500 border ${
+                errors.message ? 'border-red-500' : 'border-gray-300'
+              }`}
+            />
+            {errors.message && (
+              <p className="mt-1 text-sm text-red-600">{errors.message}</p>
+            )}
+          </div>
+        </div>
+        
+        {errors.submit && (
+          <div className="sm:col-span-2">
+            <div className="p-4 bg-red-50 rounded-md">
+              <p className="text-sm text-red-600">{errors.submit}</p>
+            </div>
+          </div>
+        )}
+        
+        <div className="sm:col-span-2">
+          <Button
+            type="submit"
+            variant="primary"
+            size="lg"
+            className="w-full"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Sending...' : 'Send Message'}
+          </Button>
+        </div>
+      </div>
+    </form>
+  );
+}

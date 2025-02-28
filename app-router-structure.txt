@@ -1,0 +1,56 @@
+social-launch-labs-website/
+├── app/
+│   ├── about/
+│   │   └── page.jsx
+│   ├── blog/
+│   │   └── page.jsx
+│   ├── case-studies/
+│   │   └── page.jsx
+│   ├── contact/
+│   │   └── page.jsx
+│   ├── pricing/
+│   │   └── page.jsx
+│   ├── services/
+│   │   └── page.jsx
+│   ├── favicon.ico
+│   ├── globals.css
+│   ├── layout.jsx
+│   └── page.jsx
+├── components/
+│   ├── layout/
+│   │   ├── Footer.jsx
+│   │   └── Navbar.jsx
+│   ├── home/
+│   │   ├── Hero.jsx
+│   │   ├── Services.jsx
+│   │   ├── About.jsx
+│   │   ├── Testimonials.jsx
+│   │   ├── CaseStudies.jsx
+│   │   ├── Pricing.jsx
+│   │   └── CTA.jsx
+│   ├── ui/
+│   │   ├── Button.jsx
+│   │   ├── Card.jsx
+│   │   ├── Container.jsx
+│   │   └── ContactForm.jsx
+│   └── shared/
+│       ├── TestimonialCard.jsx
+│       ├── PricingCard.jsx
+│       └── ServiceCard.jsx
+├── lib/
+│   ├── sanity.js
+│   └── queries.js
+├── public/
+│   └── images/
+├── sanity/
+│   ├── schemas/
+│   │   ├── index.js
+│   │   ├── homepage.js
+│   │   ├── services.js
+│   │   ├── testimonials.js
+│   │   └── caseStudies.js
+│   └── sanity.config.js
+├── .env.local
+├── next.config.js
+├── package.json
+└── tailwind.config.js

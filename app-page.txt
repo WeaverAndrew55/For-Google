@@ -1,0 +1,50 @@
+import Hero from '@/components/home/Hero';
+import Services from '@/components/home/Services';
+import About from '@/components/home/About';
+import Testimonials from '@/components/home/Testimonials';
+import CaseStudies from '@/components/home/CaseStudies';
+import Pricing from '@/components/home/Pricing';
+import CTA from '@/components/home/CTA';
+import { client } from '@/lib/sanity';
+
+export const revalidate = 60;
+
+async function getHomepageData() {
+  return await client.fetch(`*[_type == "homepage"][0]{
+    hero,
+    services,
+    about,
+    testimonials[]->{
+      _id,
+      name,
+      company,
+      image,
+      quote
+    },
+    caseStudies[]->{
+      _id,
+      title,
+      description,
+      image,
+      results
+    },
+    pricing,
+    cta
+  }`);
+}
+
+export default async function Home() {
+  const homepageData = await getHomepageData();
+  
+  return (
+    <>
+      <Hero data={homepageData.hero} />
+      <Services data={homepageData.services} />
+      <About data={homepageData.about} />
+      <Testimonials data={homepageData.testimonials} />
+      <CaseStudies data={homepageData.caseStudies} />
+      <Pricing data={homepageData.pricing} />
+      <CTA data={homepageData.cta} />
+    </>
+  );
+}
